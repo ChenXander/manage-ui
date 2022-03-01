@@ -93,7 +93,7 @@
     </el-card>
 
     <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%">
+    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed">
       <!-- 内容主体区域 -->
       <el-form
         :model="addForm"
@@ -232,8 +232,10 @@ export default {
       }
       this.$message.success("更新用户状态成功！");
     },
-    // 展示编辑用户信息的对话框
-    showEditDialog() {},
+    // 监听添加用户对话框的关闭事件
+    addDialogClosed(){
+        this.$refs.addFormRef.resetFields();
+    }
   },
 };
 </script>
