@@ -21,7 +21,8 @@
           unique-opened
           :collapse="isCollapse"
           :collapse-transition="false"
-          :router="true"
+          router
+          :default-active="activePath"
         >
           <!-- 一级菜单 -->
           <el-submenu
@@ -39,9 +40,10 @@
 
             <!-- 二级菜单 -->
             <el-menu-item
-              :index="'/'+ subItem.path"
+              :index="'/' + subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
+              @click="saveNavState('/' + subItem.path)"
             >
               <template slot="title">
                 <!-- 图标 -->
@@ -55,8 +57,8 @@
       </el-aside>
       <!-- 右侧内容主体 -->
       <el-main>
-          <!-- 路由占位符 -->
-          <router-view></router-view>
+        <!-- 路由占位符 -->
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -75,11 +77,15 @@ export default {
         102: "iconfont icon-danju",
         145: "iconfont icon-baobiao",
       },
+      //   是否折叠
       isCollapse: false,
+      //   被激活的链接
+      activePath: "",
     };
   },
   created() {
     this.getMenuList();
+    this.activePath = window.sessionStorage.getItem("activePath");
   },
   methods: {
     logout() {
@@ -95,6 +101,11 @@ export default {
     // 点击按钮切换菜单的折叠与展开
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
+    },
+    // 保存链接的激活状态
+    saveNavState(activePath) {
+      window.sessionStorage.setItem("activePath", activePath);
+      this.activePath = activePath;
     },
   },
 };
