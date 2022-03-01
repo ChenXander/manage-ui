@@ -21,6 +21,7 @@
           unique-opened
           :collapse="isCollapse"
           :collapse-transition="false"
+          :router="true"
         >
           <!-- 一级菜单 -->
           <el-submenu
@@ -38,7 +39,7 @@
 
             <!-- 二级菜单 -->
             <el-menu-item
-              :index="subItem.id + ''"
+              :index="'/'+ subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
             >
