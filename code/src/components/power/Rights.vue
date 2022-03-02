@@ -44,7 +44,6 @@ export default {
         return thsi.$message.error("获取权限列表失败！");
       }
       this.rightsList = res.data;
-      console.log(this.rightsList);
     },
   },
 };

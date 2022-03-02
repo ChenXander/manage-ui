@@ -253,7 +253,6 @@ export default {
           { validator: checkMobile, trigger: "blur" },
         ],
       },
-      //  控制分配角色对话框的显示与隐藏
     };
   },
   created() {
