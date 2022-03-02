@@ -95,7 +95,7 @@
               size="mini"
               type="warning"
               icon="el-icon-setting"
-              @click="showSetRightDialog"
+              @click="showSetRightDialog(scope.row)"
               >分配权限</el-button
             >
           </template>
@@ -164,7 +164,18 @@
       title="分配权限"
       :visible.sync="setRightDialogVisible"
       width="50%"
+      @close="setRightDialogClosed"
     >
+      <!-- 树形控件 -->
+      <el-tree
+        :data="rightslist"
+        :props="treeProps"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        :default-checked-keys="defKeys"
+        ref="treeRef"
+      ></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="setRightDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="setRightDialogVisible = false"
@@ -184,7 +195,16 @@ export default {
       // 控制分配权限对话框的显示和隐藏
       setRightDialogVisible: false,
       // 所有权限的数据
-      rightsList: [],
+      rightslist: [],
+      //   树形控件的绑定对象
+      treeProps: {
+        label: "authName",
+        children: "children",
+      },
+      //   默认选中的节点id值数组
+      defKeys: [],
+      // 当前即将分配权限的角色id
+      roleId: "",
 
       //   控制添加角色对话框的显示和隐藏
       addDialogVisible: false,
@@ -351,15 +371,37 @@ export default {
     },
 
     // 展示分配权限的对话框
-    async showSetRightDialog() {
+    async showSetRightDialog(role) {
+      this.roleId = role.id;
       // 获取所有权限数据
       const { data: res } = await this.$http.get("rights/tree");
       if (res.meta.status !== 200) {
         return this.$message.error("获取权限数据失败！");
       }
       //   把获取到的权限数据保存到data中
-      this.rightsList = res.data;
+      this.rightslist = res.data;
+
+      //  递归获取三级节点的id
+      this.getLeafKeys(role, this.defKeys);
+
       this.setRightDialogVisible = true;
+    },
+
+    // 通过递归的形式，获取角色下所有三级权限的id，并保存到defKeys数组中
+    getLeafKeys(node, arr) {
+      // 如果当前node节点不包含children属性，则是三级节点
+      if (!node.children) {
+        return arr.push(node.id);
+      }
+
+      node.children.forEach((item) => {
+        this.getLeafKeys(item, arr);
+      });
+    },
+
+    // 监听分配权限对话框的关闭事件
+    setRightDialogClosed() {
+      this.defKeys = [];
     },
   },
 };
