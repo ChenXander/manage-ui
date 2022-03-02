@@ -25,10 +25,36 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+        // 查询条件
+        queryInfo: {
+            type:3,
+            pagenum:1,
+            pagesize:5
+        },
+        // 商品分类的数据列表，默认为空
+        catelist:[],
+        // 总数据条数
+        total: 0
+    };
   },
-  created() {},
-  methods: {},
+  created() {
+      this.getCateList()
+  },
+  methods: {
+    //   获取商品分类数据
+    async getCateList(){
+       const {data:res} = await this.$http.get('categories',{params:this.queryInfo})
+
+       if (res.meta.status!== 200) {
+           return this.$message.error('获取商品分类失败！')
+       }
+    //    把数据列表赋值给catelist
+       this.catelist = res.data.result
+    //    为总数据条数赋值
+       this.total = res.data.total
+    }
+  },
 };
 </script>
 
