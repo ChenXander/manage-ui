@@ -48,7 +48,38 @@
           <!-- 动态参数表格 -->
           <el-table :data="manyTableData" border stripe>
             <!-- 展开行 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <!-- 循环渲染tag标签 -->
+                <el-tag
+                  v-for="(item, i) in scope.row.attr_vals"
+                  :key="i"
+                  closable
+                >
+                  {{ item }}
+                </el-tag>
+
+                <!-- 输入的文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="inputVisible"
+                  v-model="inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm"
+                  @blur="handleInputConfirm"
+                >
+                </el-input>
+                <!-- 添加按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput"
+                  >+ New Tag</el-button
+                >
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
             <el-table-column type="index"></el-table-column>
             <el-table-column
@@ -209,6 +240,11 @@ export default {
           { required: true, message: "请输入参数名称", trigger: "blur" },
         ],
       },
+
+      //   控制按钮与文本框的切换显示
+      inputVisible: false,
+      // 文本框输入的内容
+      inputValue: "",
     };
   },
   created() {
@@ -249,6 +285,10 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error("获取参数列表失败！");
       }
+
+      res.data.forEach((item) => {
+        item.attr_vals = item.attr_vals ? item.attr_vals.split(" ") : [];
+      });
       //   判断是动态参数还是静态属性
       if (this.activeName === "many") {
         this.manyTableData = res.data;
@@ -351,6 +391,13 @@ export default {
       this.$message.success("删除参数成功！");
       this.getParamsData();
     },
+
+    // 文本框失去焦点或按下Enter都会触发
+    handleInputConfirm() {},
+    // 点击按钮展示文本输入框
+    showInput() {
+      this.inputVisible = true;
+    },
   },
 
   computed: {
@@ -382,5 +429,13 @@ export default {
 <style lang="less" scoped>
 .cat_opt {
   margin: 15px 0;
+}
+
+.el-tag {
+  margin: 10px;
+}
+
+.input-new-tag {
+    width: 120px;
 }
 </style>
