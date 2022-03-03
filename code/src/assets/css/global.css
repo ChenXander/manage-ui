@@ -25,3 +25,7 @@ body,
 .el-pagination {
   margin-top: 15px;
 }
+/* 商品分类添加分类级联选择器展开的高度 */
+.el-cascader-menu {
+  height: 300px;
+}
