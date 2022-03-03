@@ -32,6 +32,12 @@
           </el-cascader>
         </el-col>
       </el-row>
+
+      <!-- tab 页签区域 -->
+      <el-tabs v-model="activeName" @tab-click="handleTabClick">
+        <el-tab-pane label="动态参数" name="first">动态参数</el-tab-pane>
+        <el-tab-pane label="静态属性" name="second">静态属性</el-tab-pane>
+      </el-tabs>
     </el-card>
   </div>
 </template>
@@ -39,10 +45,46 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      // 商品分类列表
+      catelist: [],
+      // 级联选择框的配置对象
+      cateProps: {
+        value: "cat_id",
+        label: "cat_name",
+        children: "children",
+      },
+      // 级联选择框双向绑定到的数组
+      selectedCateKeys: [],
+      // 被激活的页签的名称
+      activeName: "first",
+    };
   },
-  created() {},
-  methods: {},
+  created() {
+    this.getCateList();
+  },
+  methods: {
+    // 获取所有的商品分类列表
+    async getCateList() {
+      const { data: res } = await this.$http.get("categories");
+      if (res.meta.status !== 200) {
+        return this.$message.error("获取商品分类失败！");
+      }
+
+      this.catelist = res.data;
+    },
+    // 级联选择框选中项变化，会触发这个函数
+    handleChange() {
+      //   证明选中的不是三级分类
+      if (this.selectedCateKeys.length !== 3) {
+        this.selectedCateKeys = [];
+        return;
+      }
+      // 证明选中的是三级分类
+    },
+    // tab 页签点击事件的处理函数
+    handleTabClick() {},
+  },
 };
 </script>
 
