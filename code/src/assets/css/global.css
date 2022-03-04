@@ -31,9 +31,14 @@ body,
 }
 
 /* 步骤条 */
-.el-Steps{
-    margin: 15px 0;
+.el-Steps {
+  margin: 15px 0;
 }
-.el-Step__title{
-    font-size: 13px;
+.el-Step__title {
+  font-size: 13px;
+}
+
+/* 富文本编辑器 */
+.ql-editor {
+  min-height: 300px;
 }
