@@ -16,7 +16,8 @@
         center
         show-icon
         :closable="false"
-      ></el-alert>
+      >
+      </el-alert>
       <!-- 步骤条区域 -->
       <el-steps
         :space="200"
@@ -33,6 +34,7 @@
       </el-steps>
 
       <!-- tab栏区域 -->
+
       <el-form
         :model="addForm"
         :rules="addFormRules"
@@ -50,15 +52,19 @@
             <el-form-item label="商品名称" prop="goods_name">
               <el-input v-model="addForm.goods_name"></el-input>
             </el-form-item>
+
             <el-form-item label="商品价格" prop="goods_price">
               <el-input v-model="addForm.goods_price" type="number"></el-input>
             </el-form-item>
+
             <el-form-item label="商品重量" prop="goods_weight">
               <el-input v-model="addForm.goods_weight" type="number"></el-input>
             </el-form-item>
+
             <el-form-item label="商品数量" prop="goods_number">
               <el-input v-model="addForm.goods_number" type="number"></el-input>
             </el-form-item>
+
             <el-form-item label="商品分类" prop="goods_cat">
               <el-cascader
                 expand-trigger="hover"
@@ -159,9 +165,11 @@ export default {
     // 获取所有商品分类数据
     async getCateList() {
       const { data: res } = await this.$http.get("categories");
+
       if (res.meta.status !== 200) {
         return this.$message.error("获取商品分类数据失败！");
       }
+
       this.catelist = res.data;
     },
 
@@ -171,8 +179,6 @@ export default {
         this.addForm.goods_cat = [];
       }
     },
-
-    // 标签页切换
     beforeTabLeave(activeName, oldActiveName) {
       // console.log('即将离开的标签页名字是：' + oldActiveName)
       // console.log('即将进入的标签页名字是：' + activeName)
@@ -194,15 +200,35 @@ export default {
         );
 
         if (res.meta.status !== 200) {
+          return this.$message.error("获取动态参数列表失败！");
+        }
+
+        res.data.forEach((item) => {
+          item.attr_vals =
+            item.attr_vals.length === 0 ? [] : item.attr_vals.split(" ");
+        });
+        this.manyTableData = res.data;
+
+
+      } else if (this.activeIndex === "2") {
+        const { data: res } = await this.$http.get(
+          `categories/${this.cateId}/attributes`,
+          {
+            params: { sel: "only" },
+          }
+        );
+
+        if (res.meta.status !== 200) {
           return this.$message.error("获取静态属性失败！");
         }
+
         this.onlyTableData = res.data;
       }
     },
   },
   computed: {
     cateId() {
-      if (this.addForm.goods_cat.length !== 3) {
+      if (this.addForm.goods_cat.length === 3) {
         return this.addForm.goods_cat[2];
       }
       return null;
