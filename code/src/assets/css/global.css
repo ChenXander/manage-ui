@@ -29,3 +29,11 @@ body,
 .el-cascader-menu {
   height: 300px;
 }
+
+/* 步骤条 */
+.el-Steps{
+    margin: 15px 0;
+}
+.el-Step__title{
+    font-size: 13px;
+}
